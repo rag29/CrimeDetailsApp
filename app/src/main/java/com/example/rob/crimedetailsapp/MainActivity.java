@@ -11,7 +11,10 @@ import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
+import android.widget.ArrayAdapter;
 import android.widget.Button;
+import android.widget.ListView;
+import android.widget.TextView;
 
 import com.android.volley.RequestQueue;
 import com.android.volley.Response;
@@ -33,6 +36,13 @@ public class MainActivity extends AppCompatActivity {
 
     String crimesInLondonURL = "https://data.police.uk/api/crimes-no-location?category=all-crime&force=leicestershire&date=2018-08";
     String crimesAtMyLocationURL = "https://data.police.uk/api/crimes-at-location?date=2017-02&location_id=884227";
+
+    ListView crimesList;
+
+    TextView introText;
+
+    Button londonButton;
+    Button myLocationButton;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -64,8 +74,10 @@ public class MainActivity extends AppCompatActivity {
 //            }
 //        }
 
-        Button londonButton = findViewById(R.id.crimesInLondonButton);
-        Button myLocationButton = findViewById(R.id.crimesAtMyLocationButton);
+        introText = findViewById(R.id.textView);
+        crimesList = findViewById(R.id.listOfCrimes);
+        londonButton = findViewById(R.id.crimesInLondonButton);
+        myLocationButton = findViewById(R.id.crimesAtMyLocationButton);
 
         londonButton.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -80,7 +92,6 @@ public class MainActivity extends AppCompatActivity {
                 apiCall(crimesAtMyLocationURL);
             }
         });
-
     }
 
     void apiCall(String url){
@@ -99,11 +110,17 @@ public class MainActivity extends AppCompatActivity {
         rQueue.add(request);
     }
 
+    void displayListView(ArrayList<CrimeDetails> crimeDetails, ArrayList<String> labels){
+        ArrayAdapter adapter = new ArrayAdapter(this, android.R.layout.simple_list_item_1, labels);
+        crimesList.setAdapter(adapter);
+    }
+
     void parseJsonData(String jsonString) {
         try {
               JSONArray arr = new JSONArray(jsonString);
               int lengthOfArray = arr.length();
               ArrayList<CrimeDetails> crimeDetailsList = new ArrayList<CrimeDetails>();
+              ArrayList<String> listItemTitles = new ArrayList<String>();
 
               for(int i = 0; i < lengthOfArray; i++){
                   CrimeDetails crimeDetails = new CrimeDetails();
@@ -151,7 +168,15 @@ public class MainActivity extends AppCompatActivity {
                   }
 
                   crimeDetailsList.add(crimeDetails);
+                  listItemTitles.add(crimeDetails.getCategory() + " on " + crimeDetails.getDate());
+                  Log.d("usTwo", "item label = " + crimeDetails.getCategory() + " on " + crimeDetails.getDate());
               }
+
+              introText.setVisibility(View.GONE);
+              londonButton.setVisibility(View.GONE);
+              myLocationButton.setVisibility(View.GONE);
+              crimesList.setVisibility(View.VISIBLE);
+              displayListView(crimeDetailsList, listItemTitles);
 
               Log.d("usTwo", jsonString);
 
