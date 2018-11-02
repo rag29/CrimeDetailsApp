@@ -9,6 +9,8 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
 
+import org.w3c.dom.Text;
+
 public class CrimeDetailsFragment extends Fragment {
 
     TextView topLabel;
@@ -30,17 +32,16 @@ public class CrimeDetailsFragment extends Fragment {
         category = view.findViewById(R.id.category);
         outcome = view.findViewById(R.id.outcome);
 
+        setCrimeDetailsFragmentData();
+
         return view;
     }
 
-    @Override
-    public void onCreate(@Nullable Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
-
-//        topLabel = getView().findViewById(R.id.topLabel);
-//        date = getView().findViewById(R.id.date);
-//        location = getView().findViewById(R.id.location);
-//        category = getView().findViewById(R.id.category);
-//        outcome = getView().findViewById(R.id.outcome);
+    public void setCrimeDetailsFragmentData(){
+        CrimeDetailsFragment.this.topLabel.setText(topLabel.getText() + " " + getArguments().getString("label"));
+        CrimeDetailsFragment.this.date.setText(date.getText() + " " + getArguments().getString("date"));
+        CrimeDetailsFragment.this.location.setText(location.getText() + "\n Street Name: " +getArguments().getString("streetName") + "\n Location ID: " + getArguments().getString("locationId") + "\n Longitude: " + getArguments().getString("longitude") + "\n Latitude: " + getArguments().getString("latitude"));
+        CrimeDetailsFragment.this.category.setText(category.getText() + " " + getArguments().getString("category"));
+        CrimeDetailsFragment.this.outcome.setText(outcome.getText() + " " + getArguments().getString("outcome") + "\n Date of Resolution: " + getArguments().getString("dateOfOutcome"));
     }
 }
